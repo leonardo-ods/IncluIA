@@ -28,7 +28,11 @@ def show_api_key_form(error_message=None):
         st.error(error_message)
 
     with st.expander("Como obter sua chave da API?"):
-        st.markdown("1. Vá para o [Google AI Studio](https://aistudio.google.com/app/apikey). 2. Clique em **'Criar chave de API'**. 3. Selecione um projeto da lista e confirme. 4. Copie a chave criada e cole abaixo.")
+        st.markdown("""
+        1. Vá para o [Google AI Studio](https://aistudio.google.com/app/apikey).
+        2. Clique em **'Criar chave de API'**.
+        3. Copie a chave criada e cole abaixo.
+        """)
 
     with st.form("api_key_form"):
         gemini_api_key = st.text_input("Cole sua Chave da API Gemini aqui", type="password")
