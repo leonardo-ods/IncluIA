@@ -13,14 +13,19 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- CSS CUSTOMIZADO PARA MELHORAR A LEGIBILIDADE ---
+# --- CSS CUSTOMIZADO PARA MODO CLARO E ESCURO ---
 st.markdown("""
     <style>
-    /* Altera a cor do texto dentro de uma textarea desabilitada */
     textarea[disabled] {
-        -webkit-text-fill-color: #2e3136; /* Cor do texto para navegadores WebKit (Chrome, Safari) */
-        color: #2e3136; /* Cor do texto para outros navegadores */
-        opacity: 1; /* Garante que o texto não fique transparente */
+        -webkit-text-fill-color: #2e3136;
+        color: #2e3136;
+        background-color: #f0f2f6;
+    }
+
+    body[data-theme="dark"] textarea[disabled] {
+        -webkit-text-fill-color: #fafafa;
+        color: #fafafa;
+        background-color: #1c1f2b;
     }
     </style>
     """, unsafe_allow_html=True)
