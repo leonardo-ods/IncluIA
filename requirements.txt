@@ -1,0 +1,8 @@
+streamlit
+google-generativeai
+PyMuPDF
+python-docx
+docx2pdf
+supabase
+python-dotenv
+textstat
