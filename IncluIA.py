@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import io
 import tempfile
+import textstat
 from textstat import flesch_reading_ease, flesch_kincaid_grade, smog_index
 import google.generativeai as genai
 import auth_utils 
