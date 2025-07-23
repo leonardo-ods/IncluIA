@@ -13,6 +13,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Linguagem das métricas de NLP
+textstat.set_lang("pt")
+
 # --- CSS CUSTOMIZADO PARA MODO CLARO E ESCURO ---
 st.markdown("""
     <style>
@@ -193,9 +196,6 @@ def metricas_NLP(texto):
 
 # Modelo de IA generativa
 modelo_txt = "gemini-2.0-flash"
-
-# Linguagem das métricas de NLP
-textstat.set_lang("pt")
 
 # --- UI ---
 
