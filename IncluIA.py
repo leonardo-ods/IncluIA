@@ -194,6 +194,8 @@ def metricas_NLP(texto):
 # Modelo de IA generativa
 modelo_txt = "gemini-2.0-flash"
 
+# Linguagem das métricas de NLP
+textstat.set_lang("pt")
 
 # --- UI ---
 
