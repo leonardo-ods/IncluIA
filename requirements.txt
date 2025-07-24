@@ -6,4 +6,4 @@ python-docx
 docx2pdf
 supabase
 python-dotenv
-textstat
+textstat==0.7.3
