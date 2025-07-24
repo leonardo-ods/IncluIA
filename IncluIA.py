@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 # Linguagem das métricas de NLP
-textstat.set_lang("pt")
+#textstat.set_lang("pt")
 
 # --- CSS CUSTOMIZADO PARA MODO CLARO E ESCURO ---
 st.markdown("""
