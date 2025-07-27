@@ -7,3 +7,4 @@ docx2pdf
 supabase
 python-dotenv
 textstat==0.7.3
+setuptools>=65.0.0
