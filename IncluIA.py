@@ -5,7 +5,8 @@ import tempfile
 import textstat
 from textstat import flesch_reading_ease, flesch_kincaid_grade, smog_index
 import google.generativeai as genai
-import auth_utils 
+import auth_utils
+import subprocess
 
 # --- Configurações Iniciais da Página ---
 st.set_page_config(
@@ -80,43 +81,67 @@ def convert_pdf_bytes_to_image_bytes(pdf_bytes, dpi=300):
         st.error(f"Erro na conversão do documento. Não foi possível ler o documento: {e}")
         return []
 
-def convert_docx_bytes_to_image_bytes(docx_bytes, dpi=300):
-    """Converte bytes de um DOCX para uma lista de bytes de imagens, usando docx2pdf Fitz."""
-    try:
-        from docx2pdf import convert as convert_docx_to_pdf
-    except ImportError:
-        st.error("Biblioteca 'docx2pdf' não encontrada. Não foi possível ler o documento.")
-        return []
+# --- Trecho Corrigido (usando LibreOffice) ---
 
+def convert_docx_bytes_to_image_bytes(docx_bytes, dpi=300):
+    """Converte bytes de um DOCX para uma lista de bytes de imagens, usando LibreOffice e Fitz."""
+    # A biblioteca docx2pdf foi removida pois não funciona em Linux sem MS Word.
+    
     tmp_docx_path = None
     tmp_pdf_path = None
-
+    
     try:
+        # 1. Salva o DOCX enviado em um arquivo temporário
         with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_docx:
             tmp_docx.write(docx_bytes)
             tmp_docx_path = tmp_docx.name
-        
+
+        # 2. Define o diretório de saída e o nome do arquivo PDF esperado
+        output_dir = os.path.dirname(tmp_docx_path)
         tmp_pdf_path = os.path.splitext(tmp_docx_path)[0] + ".pdf"
+        
+        # 3. Executa o comando do LibreOffice para converter o DOCX em PDF
+        command = f"libreoffice --headless --convert-to pdf --outdir {output_dir} {tmp_docx_path}"
+        
+        process = subprocess.run(
+            command, 
+            shell=True, 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE,
+            timeout=60 # Adiciona um timeout de 60 segundos para evitar que o processo trave
+        )
 
-        try:
-            convert_docx_to_pdf(tmp_docx_path, tmp_pdf_path)
-        except Exception as e:
-            st.error(f'Erro na conversão do documento. Não foi possível ler o documento: {e}')
+        # 4. Verifica se a conversão foi bem-sucedida e se o PDF foi criado
+        if process.returncode != 0:
+            # Se o comando falhou, mostra o erro do LibreOffice
+            st.error(f"Erro na conversão com LibreOffice. Detalhes:")
+            st.code(process.stderr.decode('utf-8', 'ignore'))
+            return []
 
+        if not os.path.exists(tmp_pdf_path):
+            st.error("Erro na conversão: o arquivo PDF não foi encontrado após a execução do LibreOffice.")
+            return []
+
+        # 5. Lê os bytes do PDF recém-criado
         with open(tmp_pdf_path, "rb") as f_pdf:
             pdf_bytes_from_docx = f_pdf.read()
         
+        # 6. Chama a sua outra função para converter os bytes do PDF em imagens
         image_bytes_list = convert_pdf_bytes_to_image_bytes(pdf_bytes_from_docx, dpi=dpi)
         return image_bytes_list
+        
+    except subprocess.TimeoutExpired:
+        st.error("Erro: A conversão do documento demorou muito e foi interrompida.")
+        return []
     except Exception as e:
-        st.error(f"Erro na conversão do documento. Não foi possível ler o documento: {e}")
+        st.error(f"Erro no processo de conversão do documento: {e}")
         return []
     finally:
+        # 7. Limpa os arquivos temporários criados (DOCX e PDF)
         if tmp_docx_path and os.path.exists(tmp_docx_path):
             os.remove(tmp_docx_path)
         if tmp_pdf_path and os.path.exists(tmp_pdf_path):
             os.remove(tmp_pdf_path)
-
 
 # --- Funções Auxiliares ---
 
