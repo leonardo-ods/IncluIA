@@ -388,11 +388,11 @@ c. Na sua justificativa, explique por que a substituição foi necessária e com
 
 Sua resposta final deve seguir esta estrutura exata, sem exceções:
 
-1.  Todas as questões adaptadas (ou as novas questões), numeradas.
+1.  Todas as questões adaptadas (ou as novas questões), numeradas. Nunca indique qual a resposta correta na avaliação adaptada.
 2.  Em uma nova linha, insira o marcador `# Justificativas:` (exatamente assim).
 3.  Abaixo do marcador, liste suas justificativas detalhadas para cada adaptação ou substituição.
 4.  Se você criou uma nova questão, informe o gabarito dela na justificativa correspondente.
-5.  NÃO utilize formatações como negrito, itálico ou listas com marcadores (como '*' ou '-'). Use apenas texto puro e numeração simples.
+5.  NÃO utilize formatações em markdown como negrito, itálico ou listas com marcadores (como '*' ou '-'). Use apenas texto puro e numeração simples.
 """
 
 # --- Prompts Específicos para cada NEE ---
