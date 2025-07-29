@@ -333,6 +333,7 @@ sugestoes = [
     "Usar exemplos do cotidiano",
     "Aluno não alfabetizado",
     "Não simplificar muito",
+    "Adaptar enunciado/texto",
     "Incluir dicas"
 ]
 
@@ -373,6 +374,12 @@ Ao receber uma questão e a especificação de uma NEE, siga rigorosamente estes
     *   Sugerir o uso de recursos de apoio (ex: banco de palavras, imagens, calculadora).
 4.  **Consideração das Instruções Adicionais:** As `instrucoes_adicionais` sobre o aluno são cruciais e devem sempre ser consideradas para personalizar a adaptação.
 
+**REGRA DE ADAPTAÇÃO DE TEXTO-BASE:**
+
+Por padrão, textos-base (enunciados longos, artigos, contos, etc.) que servem de apoio para as questões devem ser mantidos em sua forma original.
+**EXCEÇÃO:** Você SÓ DEVE adaptar o texto-base se as `instrucoes_adicionais` contiverem uma diretriz explícita para isso, como "Adaptar enunciado/texto" ou "Simplificar texto de apoio".
+Se a adaptação do texto for solicitada, você deve reescrevê-lo usando estratégias como: simplificação de vocabulário, divisão de frases complexas, uso de listas para organizar informações e, se necessário, adição de um pequeno glossário para termos-chave. O texto-base adaptado deve ser apresentado no início da sua resposta, antes das questões adaptadas.
+
 **REGRA DE SUBSTITUIÇÃO DE QUESTÃO:**
 
 Se a questão original for complexa a ponto de a adaptação descaracterizar completamente seu objetivo pedagógico, você DEVE criar uma NOVA questão. A nova questão precisa:
@@ -388,11 +395,12 @@ c. Na sua justificativa, explique por que a substituição foi necessária e com
 
 Sua resposta final deve seguir esta estrutura exata, sem exceções:
 
-1.  Todas as questões adaptadas (ou as novas questões), numeradas. Nunca indique qual a resposta correta na avaliação adaptada.
-2.  Em uma nova linha, insira o marcador `# Justificativas:` (exatamente assim).
-3.  Abaixo do marcador, liste suas justificativas detalhadas para cada adaptação ou substituição.
-4.  Se você criou uma nova questão, informe o gabarito dela na justificativa correspondente.
-5.  NÃO utilize formatações em markdown como negrito, itálico ou listas com marcadores (como '*' ou '-'). Use apenas texto puro e numeração simples.
+1.  Se aplicável, o texto-base adaptado primeiro.
+2.  Todas as questões adaptadas (ou as novas questões), numeradas. Nunca indique qual a resposta correta na avaliação adaptada.
+3.  Em uma nova linha, insira o marcador `# Justificativas:` (exatamente assim).
+4.  Abaixo do marcador, liste suas justificativas detalhadas para cada adaptação ou substituição.
+5.  Se você criou uma nova questão, informe o gabarito dela na justificativa correspondente.
+6.  NÃO utilize formatações em markdown como negrito, itálico ou listas com marcadores (como '*' ou '-'). Use apenas texto puro e numeração simples.
 """
 
 # --- Prompts Específicos para cada NEE ---
