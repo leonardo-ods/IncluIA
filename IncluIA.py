@@ -333,7 +333,7 @@ sugestoes = [
     "Usar exemplos do cotidiano",
     "Aluno não alfabetizado",
     "Não simplificar muito",
-    "Adaptar enunciado/texto",
+    "Simplificar texto de apoio",
     "Incluir dicas"
 ]
 
