@@ -6,7 +6,7 @@ import io
 import tempfile
 import fitz  # PyMuPDF
 from docx import Document
-import subprocess
+from docx2pdf import convert
 from auth_utils import authenticate_user
 
 # --- Configurações Iniciais da Página ---
@@ -69,65 +69,38 @@ def convert_pdf_bytes_to_image_bytes_pymupdf(pdf_bytes):
         st.error(f'Erro ao converter PDF para imagem: {e}')
     return image_bytes_list
 
-def convert_docx_bytes_to_image_bytes(docx_bytes, dpi=300):
-    """Converte bytes de um DOCX para uma lista de bytes de imagens, usando LibreOffice e Fitz."""
-    # A biblioteca docx2pdf foi removida pois não funciona em Linux sem MS Word.
-    
-    tmp_docx_path = None
-    tmp_pdf_path = None
-    
+def convert_docx_bytes_to_image_bytes_with_pymupdf(docx_bytes):
+    image_bytes_list = []
+    temp_docx_file = None
+    temp_pdf_file = None
     try:
-        # 1. Salva o DOCX enviado em um arquivo temporário
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_docx:
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.docx') as tmp_docx:
             tmp_docx.write(docx_bytes)
-            tmp_docx_path = tmp_docx.name
-
-        # 2. Define o diretório de saída e o nome do arquivo PDF esperado
-        output_dir = os.path.dirname(tmp_docx_path)
-        tmp_pdf_path = os.path.splitext(tmp_docx_path)[0] + ".pdf"
-        
-        # 3. Executa o comando do LibreOffice para converter o DOCX em PDF
-        command = f"libreoffice --headless --convert-to pdf --outdir {output_dir} {tmp_docx_path}"
-        
-        process = subprocess.run(
-            command, 
-            shell=True, 
-            stdout=subprocess.PIPE, 
-            stderr=subprocess.PIPE,
-            timeout=60 # Adiciona um timeout de 60 segundos para evitar que o processo trave
-        )
-
-        # 4. Verifica se a conversão foi bem-sucedida e se o PDF foi criado
-        if process.returncode != 0:
-            # Se o comando falhou, mostra o erro do LibreOffice
-            st.error(f"Erro na conversão com LibreOffice. Detalhes:")
-            st.code(process.stderr.decode('utf-8', 'ignore'))
+            temp_docx_file = tmp_docx.name
+        temp_pdf_file = temp_docx_file.replace('.docx', '.pdf')
+        try:
+            st.info('Tentando converter DOCX para PDF...')
+            convert(temp_docx_file, temp_pdf_file)
+        except Exception as e_convert:
+            st.error(f'Erro ao converter DOCX para PDF: {e_convert}')
             return []
-
-        if not os.path.exists(tmp_pdf_path):
-            st.error("Erro na conversão: o arquivo PDF não foi encontrado após a execução do LibreOffice.")
-            return []
-
-        # 5. Lê os bytes do PDF recém-criado
-        with open(tmp_pdf_path, "rb") as f_pdf:
-            pdf_bytes_from_docx = f_pdf.read()
-        
-        # 6. Chama a sua outra função para converter os bytes do PDF em imagens
-        image_bytes_list = convert_pdf_bytes_to_image_bytes(pdf_bytes_from_docx, dpi=dpi)
-        return image_bytes_list
-        
-    except subprocess.TimeoutExpired:
-        st.error("Erro: A conversão do documento demorou muito e foi interrompida.")
-        return []
+        if os.path.exists(temp_pdf_file):
+            with open(temp_pdf_file, 'rb') as f_pdf:
+                pdf_bytes_converted = f_pdf.read()
+            image_bytes_list = convert_pdf_bytes_to_image_bytes_pymupdf(pdf_bytes_converted)
+        else:
+            st.warning('Arquivo PDF temporário não foi criado do DOCX.')
     except Exception as e:
-        st.error(f"Erro no processo de conversão do documento: {e}")
-        return []
+        st.error(f'Erro na conversão de DOCX: {e}')
     finally:
-        # 7. Limpa os arquivos temporários criados (DOCX e PDF)
-        if tmp_docx_path and os.path.exists(tmp_docx_path):
-            os.remove(tmp_docx_path)
-        if tmp_pdf_path and os.path.exists(tmp_pdf_path):
-            os.remove(tmp_pdf_path)
+        if temp_docx_file and os.path.exists(temp_docx_file): os.remove(temp_docx_file)
+        if temp_pdf_file and os.path.exists(temp_pdf_file): os.remove(temp_pdf_file)
+    return image_bytes_list
+
+def adicionar_sugestao(sugestao):
+    texto_atual = st.session_state['instrucoes_adicionais']
+    st.session_state['instrucoes_adicionais'] = (texto_atual + ', ' + sugestao) if texto_atual else sugestao
+
 
 # --- UI ---
 st.title('🧩 IncluIA - Gerador de Imagens')
