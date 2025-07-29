@@ -16,6 +16,23 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# --- CSS CUSTOMIZADO PARA MODO CLARO E ESCURO ---
+st.markdown("""
+    <style>
+    textarea[disabled] {
+        -webkit-text-fill-color: #2e3136;
+        color: #2e3136;
+        background-color: #f0f2f6;
+    }
+
+    body[data-theme="dark"] textarea[disabled] {
+        -webkit-text-fill-color: #fafafa;
+        color: #fafafa;
+        background-color: #1c1f2b;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # --- Autenticação e Configuração da API ---
 if not authenticate_user():
     st.stop()
@@ -287,7 +304,7 @@ if btn_gerar_imagem:
 
                     if image_prompt_from_ia != 'Não gerado.' and image_prompt_from_ia.strip():
                         st.success('Prompt para imagem gerado!')
-                        st.info(f'**Prompt para imagem:**\n{image_prompt_from_ia}')
+                        #st.info(f'**Prompt para imagem:**\n{image_prompt_from_ia}')
 
                         with st.spinner('IA gerando imagem...'):
                             try:
@@ -338,7 +355,7 @@ if btn_gerar_imagem:
 st.markdown('---')
 st.subheader('Resultado da Geração:')
 if st.session_state.generated_image:
-    st.image(st.session_state.generated_image, caption='Imagem Gerada pela IncluIA', use_column_width=True)
+    st.image(st.session_state.generated_image, caption='Imagem Gerada pela IncluIA', use_container_width=True)
 else:
     st.info('A imagem gerada aparecerá aqui.')
 st.text_area(label='Descrição da Imagem (gerada pela IA):', value=st.session_state.image_description, disabled=True, height=150)
