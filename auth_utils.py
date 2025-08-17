@@ -32,6 +32,8 @@ def show_api_key_form(error_message=None):
         1. Vá para o [Google AI Studio](https://aistudio.google.com/app/apikey).
         2. Clique em **'Criar chave de API'**.
         3. Copie a chave criada e cole abaixo.
+
+        **Importante:** A chave correta é uma sequência de 39 caracteres que sempre começa com `AIza`.
         """)
 
     with st.form("api_key_form"):
@@ -39,21 +41,34 @@ def show_api_key_form(error_message=None):
         submitted = st.form_submit_button("Salvar e Validar Chave")
 
         if submitted and gemini_api_key:
-            supabase = st.session_state.supabase_client
-            user_id = st.session_state.user.id
+            submitted_key = gemini_api_key.strip()
+            if not submitted_key.startswith("AIza") or len(submitted_key) != 39:
+                st.error("Formato de chave inválido. A chave deve começar com 'AIza' e ter 39 caracteres. Por favor, copie a chave correta no Google AI Studio.")
+                return
+
             try:
+                genai.configure(api_key=submitted_key)
+                genai.list_models()  # Uma chamada leve para testar a autenticação
+
+                supabase = st.session_state.supabase_client
+                user_id = st.session_state.user.id
                 supabase.table('profiles').update({
-                    'gemini_api_key': gemini_api_key
+                    'gemini_api_key': submitted_key
                 }).eq('id', user_id).execute()
 
-                st.success("Chave salva! Recarregando para validação...")
+                st.success("Chave válida salva com sucesso! Recarregando...")
                 if 'profile' in st.session_state:
                     del st.session_state['profile']
                 if 'api_key_validated' in st.session_state:
                     del st.session_state['api_key_validated']
                 st.rerun()
+
             except Exception as e:
-                st.error(f"Ocorreu um erro ao salvar a chave: {e}")
+                if "API key not valid" in str(e):
+                    st.error("A chave tem o formato correto, mas é inválida. Verifique se você a copiou corretamente ou gere uma nova chave.")
+                else:
+                    st.error(f"Ocorreu um erro ao tentar validar a chave: {e}")
+
 
 def show_set_username_form():
     """Mostra um formulário para usuários existentes definirem seu nome de usuário."""
