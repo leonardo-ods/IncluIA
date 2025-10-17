@@ -47,7 +47,7 @@ try:
     client = genai.Client(api_key=api_key_from_profile)
 
     modelo_texto_avancado = 'gemini-2.5-flash'
-    modelo_gerador_imagem = 'gemini-2.5-flash-image'
+    modelo_gerador_imagem = 'gemini-2.0-flash-preview-image-generation'
     
 except Exception as e:
     st.error(f"Erro ao inicializar o cliente Gemini. Detalhe: {e}")
