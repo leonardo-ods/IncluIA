@@ -221,7 +221,7 @@ def metricas_NLP(texto):
     }
 
 # Modelo de IA generativa
-modelo_txt = "gemini-2.5-flash"
+modelo_txt = "gemini-2.0-flash"
 
 # --- UI ---
 
