@@ -21,13 +21,13 @@ st.set_page_config(
 # --- CSS CUSTOMIZADO PARA MODO CLARO E ESCURO ---
 st.markdown("""
     <style>
-    textarea {
+    textarea[disabled] {
         -webkit-text-fill-color: #2e3136;
         color: #2e3136;
         background-color: #f0f2f6;
     }
 
-    body[data-theme="dark"] textarea {
+    body[data-theme="dark"] textarea[disabled] {
         -webkit-text-fill-color: #fafafa;
         color: #fafafa;
         background-color: #1c1f2b;
