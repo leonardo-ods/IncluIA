@@ -505,6 +505,9 @@ with col2_btn:
 
 # --- Lógica de Geração da IA e Exibição ---
 
+output_adaptado_placeholder = st.empty()
+output_justificativas_placeholder = st.empty()
+
 if btn_adaptar:
     user_content_parts = []
     has_text_input = bool(st.session_state.campo_input and st.session_state.campo_input.strip())
@@ -591,7 +594,6 @@ if btn_adaptar:
 # --- Exibição dos Resultados na Interface ---
 
 # CORREÇÃO DE BUG:
-output_adaptado_placeholder = st.empty()
 # st.text_area(label='Texto Adaptado (A IncluIA pode cometer erros. Revise as respostas.):',
 #              value=st.session_state.output_adaptado,
 #              disabled=True,
@@ -615,7 +617,6 @@ else:
         st.warning("Texto adaptado muito curto ou vazio para análise de legibilidade (mínimo 20 palavras).")
 
 # CORREÇÃO DE BUG:
-output_justificativas_placeholder = st.empty()
 # st.text_area(label='Justificativas da Adaptação:',
 #              value=st.session_state.output_justificativas,
 #              disabled=True,
