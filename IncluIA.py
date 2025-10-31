@@ -81,8 +81,6 @@ def convert_pdf_bytes_to_image_bytes(pdf_bytes, dpi=300):
         st.error(f"Erro na conversão do documento. Não foi possível ler o documento: {e}")
         return []
 
-# --- Trecho Corrigido (usando LibreOffice) ---
-
 def convert_docx_bytes_to_image_bytes(docx_bytes, dpi=300):
     """Converte bytes de um DOCX para uma lista de bytes de imagens, usando LibreOffice e Fitz."""
     # A biblioteca docx2pdf foi removida pois não funciona em Linux sem MS Word.
@@ -506,6 +504,7 @@ with col2_btn:
 # --- Lógica de Geração da IA e Exibição ---
 
 output_adaptado_placeholder = st.empty()
+metricas_adaptado_placeholder = st.empty()
 output_justificativas_placeholder = st.empty()
 
 if btn_adaptar:
@@ -570,20 +569,6 @@ if btn_adaptar:
                 st.session_state.output_adaptado = full_response_text
                 st.session_state.output_justificativas = "Nenhuma justificativa explícita fornecida pela IA."
 
-            # ---- Atualização dos placeholders ----
-            output_adaptado_placeholder.text_area(
-                label='Texto Adaptado (A IncluIA pode cometer erros. Revise as respostas.):',
-                value=st.session_state.output_adaptado,
-                disabled=True,
-                height=350
-            )
-            output_justificativas_placeholder.text_area(
-                label='Justificativas da Adaptação:',
-                value=st.session_state.output_justificativas,
-                disabled=True,
-                height=250
-            )
-
         except Exception as e:
             st.error(f"Ocorreu um erro ({type(e).__name__}) ao chamar a IA: {e}")
             if "503" in str(e) or "RESOURCE_EXHAUSTED" in str(e).upper():
@@ -591,37 +576,41 @@ if btn_adaptar:
             st.session_state.output_adaptado = "Não foi possível processar a solicitação devido a um erro."
             st.session_state.output_justificativas = ""
 
+
 # --- Exibição dos Resultados na Interface ---
 
-# CORREÇÃO DE BUG:
-# st.text_area(label='Texto Adaptado (A IncluIA pode cometer erros. Revise as respostas.):',
-#              value=st.session_state.output_adaptado,
-#              disabled=True,
-#              height=350,
-#              key="output_adaptado_area")
+if st.session_state.output_adaptado:
+    output_adaptado_placeholder.text_area(
+        label='Texto Adaptado (A IncluIA pode cometer erros. Revise as respostas.):',
+        value=st.session_state.output_adaptado,
+        disabled=True,
+        height=350
+    )
 
-if isinstance(st.session_state.output_adaptado, str) and st.session_state.output_adaptado.strip() and len(st.session_state.output_adaptado.split()) >= 20:
-    metric_results_adapted = metricas_NLP(st.session_state.output_adaptado)
-    if isinstance(metric_results_adapted, dict):
-        col_ma1, col_ma2, col_ma3 = st.columns([1, 0.05, 1])
-        with col_ma1:
-            st.markdown(f"**Facilidade de Leitura (Flesch):** {metric_results_adapted['facilidade_leitura_val']} ({metric_results_adapted['facilidade_leitura_desc']})")
-            st.markdown(f"**Série Aprox. (Flesch-Kincaid):** {metric_results_adapted['serie_aprox_val']} ({metric_results_adapted['serie_aprox_desc']})")
-        with col_ma3:
-            st.markdown(f"**Nível Escolar (SMOG):** {metric_results_adapted['nivel_escolar_val']} ({metric_results_adapted['nivel_escolar_desc']})")
-            st.markdown(f"**Variedade Lexical:** {metric_results_adapted['variedade_lexical_val']} ({metric_results_adapted['variedade_lexical_desc']})")
-    else:
-        st.info(metric_results_adapted)
-else:
-    if st.session_state.output_adaptado and len(st.session_state.output_adaptado.split()) < 20:
-        st.warning("Texto adaptado muito curto ou vazio para análise de legibilidade (mínimo 20 palavras).")
+    with metricas_adaptado_placeholder.container():
+        if len(st.session_state.output_adaptado.split()) >= 20:
+            metric_results_adapted = metricas_NLP(st.session_state.output_adaptado)
+            if isinstance(metric_results_adapted, dict):
+                col_ma1, col_ma2, col_ma3 = st.columns([1, 0.05, 1])
+                with col_ma1:
+                    st.markdown(f"**Facilidade de Leitura (Flesch):** {metric_results_adapted['facilidade_leitura_val']} ({metric_results_adapted['facilidade_leitura_desc']})")
+                    st.markdown(f"**Série Aprox. (Flesch-Kincaid):** {metric_results_adapted['serie_aprox_val']} ({metric_results_adapted['serie_aprox_desc']})")
+                with col_ma3:
+                    st.markdown(f"**Nível Escolar (SMOG):** {metric_results_adapted['nivel_escolar_val']} ({metric_results_adapted['nivel_escolar_desc']})")
+                    st.markdown(f"**Variedade Lexical:** {metric_results_adapted['variedade_lexical_val']} ({metric_results_adapted['variedade_lexical_desc']})")
+            else:
+                st.info(metric_results_adapted)
+        else:
+            if st.session_state.output_adaptado:
+                st.warning("Texto adaptado muito curto ou vazio para análise de legibilidade (mínimo 20 palavras).")
 
-# CORREÇÃO DE BUG:
-# st.text_area(label='Justificativas da Adaptação:',
-#              value=st.session_state.output_justificativas,
-#              disabled=True,
-#              height=250,
-#              key="output_justificativas_area")
+if st.session_state.output_justificativas:
+    output_justificativas_placeholder.text_area(
+        label='Justificativas da Adaptação:',
+        value=st.session_state.output_justificativas,
+        disabled=True,
+        height=250
+    )
 
 st.markdown('---')
-st.caption("Lembre-se: A IncluIA é uma ferramenta de auxílio. Revise as respostas.")
+st.caption("A IncluIA é uma ferramenta de auxílio. Revise as respostas.")
