@@ -567,6 +567,20 @@ if btn_adaptar:
                 st.session_state.output_adaptado = full_response_text
                 st.session_state.output_justificativas = "Nenhuma justificativa explícita fornecida pela IA."
 
+            # ---- Atualização dos placeholders ----
+            output_adaptado_placeholder.text_area(
+                label='Texto Adaptado (A IncluIA pode cometer erros. Revise as respostas.):',
+                value=st.session_state.output_adaptado,
+                disabled=True,
+                height=350
+            )
+            output_justificativas_placeholder.text_area(
+                label='Justificativas da Adaptação:',
+                value=st.session_state.output_justificativas,
+                disabled=True,
+                height=250
+            )
+
         except Exception as e:
             st.error(f"Ocorreu um erro ({type(e).__name__}) ao chamar a IA: {e}")
             if "503" in str(e) or "RESOURCE_EXHAUSTED" in str(e).upper():
@@ -576,11 +590,13 @@ if btn_adaptar:
 
 # --- Exibição dos Resultados na Interface ---
 
-st.text_area(label='Texto Adaptado (A IncluIA pode cometer erros. Revise as respostas.):',
-             value=st.session_state.output_adaptado,
-             disabled=True,
-             height=350,
-             key="output_adaptado_area")
+# CORREÇÃO DE BUG:
+output_adaptado_placeholder = st.empty()
+# st.text_area(label='Texto Adaptado (A IncluIA pode cometer erros. Revise as respostas.):',
+#              value=st.session_state.output_adaptado,
+#              disabled=True,
+#              height=350,
+#              key="output_adaptado_area")
 
 if isinstance(st.session_state.output_adaptado, str) and st.session_state.output_adaptado.strip() and len(st.session_state.output_adaptado.split()) >= 20:
     metric_results_adapted = metricas_NLP(st.session_state.output_adaptado)
@@ -598,12 +614,13 @@ else:
     if st.session_state.output_adaptado and len(st.session_state.output_adaptado.split()) < 20:
         st.warning("Texto adaptado muito curto ou vazio para análise de legibilidade (mínimo 20 palavras).")
 
-
-st.text_area(label='Justificativas da Adaptação:',
-             value=st.session_state.output_justificativas,
-             disabled=True,
-             height=250,
-             key="output_justificativas_area")
+# CORREÇÃO DE BUG:
+output_justificativas_placeholder = st.empty()
+# st.text_area(label='Justificativas da Adaptação:',
+#              value=st.session_state.output_justificativas,
+#              disabled=True,
+#              height=250,
+#              key="output_justificativas_area")
 
 st.markdown('---')
 st.caption("Lembre-se: A IncluIA é uma ferramenta de auxílio. Revise as respostas.")
