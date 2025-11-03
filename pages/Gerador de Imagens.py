@@ -217,7 +217,7 @@ nee_details_image = {
 
 col1_btn, col2_btn, col3_btn = st.columns([1, 2, 1])
 with col2_btn:
-    btn_gerar_imagem = st.button(label='GERAR IMAGEM E DESCRIÇÃO', use_column_width=True)
+    btn_gerar_imagem = st.button(label='GERAR IMAGEM E DESCRIÇÃO', use_container_width=True)
 
 if 'generated_image' not in st.session_state: st.session_state.generated_image = None
 if 'image_description' not in st.session_state: st.session_state.image_description = ''
