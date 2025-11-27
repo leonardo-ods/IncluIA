@@ -104,7 +104,7 @@ def adicionar_sugestao(sugestao):
 
 # --- UI ---
 st.title('🧩 IncluIA - Gerador de Imagens')
-st.warning('**Atenção: A geração de imagens pela IncluIA é experimental e pode não fornecer os resultados desejados.**')
+st.warning('**Atenção: A geração de imagens pela IncluIA é experimental e pode não funcionar corretamente ou fornecer os resultados desejados.**')
 
 if 'campo_input_text' not in st.session_state:
     st.session_state.campo_input_text = ''
